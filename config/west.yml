@@ -7,10 +7,40 @@ manifest:
     - name: cormoran
       url-base: https://github.com/cormoran
   projects:
+    # --- ZMK + Zephyr: cormoran's Custom Studio Protocol stack (ZMK master) ---
+    # Required for the DYA Studio Level 2 runtime Macro/Combo modules, which
+    # only exist for main+custom-studio-protocol / main+dya.
     - name: zmk
       remote: cormoran
-      revision: e5397fd8588d691f7dae08c1f9f55667e38be287
-      import: app/west.yml
+      revision: main+dya
+      clone-depth: 1
+      import:
+        file: app/west.yml
+    - name: zephyr
+      remote: cormoran
+      revision: v4.1.0+zmk-fixes+nrf-half-duplex-uart
+      clone-depth: 1
+      import:
+        name-blocklist:
+          - ci-tools
+          - hal_altera
+          - hal_cypress
+          - hal_infineon
+          - hal_microchip
+          - hal_nxp
+          - hal_openisa
+          - hal_xtensa
+          - hal_st
+          - hal_ti
+          - loramac-node
+          - mcuboot
+          - mcumgr
+          - net-tools
+          - openthread
+          - edtt
+          - trusted-firmware-m
+
+    # --- torabo-tsuki hardware modules (sekigon-gonnoc) ---
     - name: zmk-component-bmp-boost
       remote: sekigon-gonnoc
       import: west.yml
@@ -31,17 +61,31 @@ manifest:
       revision: main
     - name: zmk-driver-kscan-4-direction-switch
       remote: sekigon-gonnoc
-    - name: zmk-module-ble-management
+
+    # --- DYA Studio Level 2 modules (Custom Studio Protocol) ---
+    - name: zmk-feature-custom-settings
       remote: cormoran
-      revision: 851661cd21f2aded8ec649da86e01a207dc4b973
-    - name: zmk-module-battery-history
+      revision: main
+    - name: zmk-feature-fast-keymap
       remote: cormoran
-      revision: 307755dd2ad4d320e14de162e8e5ef018f29d929
-    - name: zmk-module-settings-rpc
-      remote: cormoran
-      revision: ad1c995cf910ca989ecd6352a1d0b41ccb18362c
+      revision: main
     - name: zmk-module-runtime-input-processor
       remote: cormoran
-      revision: dbf92f764de8b6ffd60bf5850514302875fe2570
+      revision: main
+    - name: zmk-feature-runtime-macro
+      remote: cormoran
+      revision: main
+    - name: zmk-feature-runtime-combo
+      remote: cormoran
+      revision: main
+    - name: zmk-module-ble-management
+      remote: cormoran
+      revision: main
+    - name: zmk-module-settings-rpc
+      remote: cormoran
+      revision: main
+    - name: zmk-module-battery-history
+      remote: cormoran
+      revision: main
   self:
     path: config
