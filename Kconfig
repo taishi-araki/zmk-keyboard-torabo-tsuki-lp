@@ -1,0 +1,8 @@
+# zmk-component-bmp-boost@master migrated bmp_boost to the ZMK v0.4 / Zephyr
+# 4.1 hardware model (NVS storage, retained-mem boot mode, DCDC) but does not
+# supply the promptless ZMK_BOARD_COMPAT hint, and no bmp_boost//zmk variant
+# exists. Provide the default here (a Kconfig `default`, not a .conf
+# assignment, which the symbol rejects) so build-user-config.yml@main's
+# board-compat check passes.
+config ZMK_BOARD_COMPAT
+	default y if BOARD_BMP_BOOST
