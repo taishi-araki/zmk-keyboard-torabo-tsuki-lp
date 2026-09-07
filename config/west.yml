@@ -41,10 +41,12 @@ manifest:
           - trusted-firmware-m
 
     # --- torabo-tsuki hardware modules (sekigon-gonnoc) ---
+    # bmp_boost master is the hardware-model-v2 / ZMK v0.4 port of the board
+    # (v0.2 is hwmv1 and cannot configure under Zephyr 4.1).
     - name: zmk-component-bmp-boost
       remote: sekigon-gonnoc
       import: west.yml
-      revision: v0.2
+      revision: master
     - name: zmk-feature-status-led
       remote: sekigon-gonnoc
       revision: main
@@ -55,7 +57,7 @@ manifest:
       remote: sekigon-gonnoc
     - name: zmk-feature-cdc-acm-bootloader-trigger
       remote: sekigon-gonnoc
-      revision: v0.2
+      revision: main
     - name: zmk-feature-non-lipo-battery-management
       remote: sekigon-gonnoc
       revision: main
