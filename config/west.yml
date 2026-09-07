@@ -16,29 +16,9 @@ manifest:
       clone-depth: 1
       import:
         file: app/west.yml
-    - name: zephyr
-      remote: cormoran
-      revision: v4.1.0+zmk-fixes+nrf-half-duplex-uart
-      clone-depth: 1
-      import:
-        name-blocklist:
-          - ci-tools
-          - hal_altera
-          - hal_cypress
-          - hal_infineon
-          - hal_microchip
-          - hal_nxp
-          - hal_openisa
-          - hal_xtensa
-          - hal_st
-          - hal_ti
-          - loramac-node
-          - mcuboot
-          - mcumgr
-          - net-tools
-          - openthread
-          - edtt
-          - trusted-firmware-m
+    # zephyr is pulled by zmk@main+dya's app/west.yml (zmkfirmware/zephyr
+    # @v4.1.0+zmk-fixes). torabo-tsuki is a BLE split, so it does not need
+    # DYA2's cormoran/zephyr half-duplex-uart fork.
 
     # --- torabo-tsuki hardware modules (sekigon-gonnoc) ---
     # bmp_boost master is the hardware-model-v2 / ZMK v0.4 port of the board
