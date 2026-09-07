@@ -48,9 +48,6 @@ manifest:
     - name: zmk-feature-custom-settings
       remote: cormoran
       revision: main
-    - name: zmk-feature-fast-keymap
-      remote: cormoran
-      revision: main
     - name: zmk-module-runtime-input-processor
       remote: cormoran
       revision: main
