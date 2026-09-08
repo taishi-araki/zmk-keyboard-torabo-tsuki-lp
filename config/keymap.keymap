@@ -4,6 +4,14 @@
 #include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/pointing.h>
 
+/*
+ * Compile-time default keymap, rebuilt from DYA Studio (Keyboard Abyss) exports
+ * mapped through position_map_m_1 (M Layout). Layers 0-2 from the 2026-09-08
+ * export; layer 3 from 2026-09-07 (its BT/output bindings survived that read).
+ * The board keeps its web-saved keymap across normal firmware updates - this
+ * only seeds a fresh board or a settings_reset. Unresolved export bindings
+ * became &none; refine them in DYA Studio.
+ */
 / {
     combos {
         compatible = "zmk,combos";
@@ -18,14 +26,13 @@
     keymap {
         compatible = "zmk,keymap";
 
-
         layer_0 {
             // Layer 1
             bindings = <
                 &kp LCTRL  &kp A  &kp S  &kp D  &kp F  &kp G  &kp H  &kp J  &kp K  &kp L  &kp SEMI  &none
                 &kp LSHFT  &kp Z  &kp X  &kp C  &kp V  &kp B  &kp N  &kp M  &kp COMMA  &kp DOT  &kp FSLH  &kp RSHFT
-                &kp LGUI  &kp ESC  &kp LALT  &lt 3 SPACE  &kp LGUI  &lt 1 SPACE  &kp SPACE  &kp RET  &lt 2 RET  &none  &none  &mkp LCLK  &mkp RCLK  &none
-                &kp ESC  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5  &kp N6  &kp N7  &kp N8  &kp N9  &kp N0  &kp BSPC  &mkp LCLK  &mkp RCLK
+                &kp LGUI  &kp ESC  &kp LALT  &none  &kp LGUI  &mo 1  &kp SPACE  &kp RET  &mo 2  &none  &none  &mkp LCLK  &mkp RCLK  &mo 3
+                &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                 &kp TAB  &kp Q  &kp W  &kp E  &kp R  &kp T  &kp Y  &kp U  &kp I  &kp O  &kp P  &kp BSPC  &kp LANG2  &kp LANG1
             >;
         };
@@ -35,18 +42,18 @@
             bindings = <
                 &kp LCTRL  &none  &none  &kp GRAVE  &none  &none  &kp N4  &kp N5  &kp N6  &none  &none  &kp EQUAL
                 &kp LSHFT  &none  &none  &none  &kp LBKT  &kp RBKT  &kp N1  &kp N2  &kp N3  &none  &none  &none
-                &none  &kp BSLH  &trans  &trans  &trans  &trans  &trans  &kp RET  &kp N0  &trans  &trans  &trans  &trans  &trans
+                &none  &none  &none  &kp SQT  &none  &none  &kp SPACE  &kp RET  &kp COMMA  &none  &none  &none  &none  &none
                 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-                &none  &none  &none  &kp SQT  &none  &none  &kp N7  &kp N8  &kp N9  &kp MINUS  &none  &none  &trans  &kp COMMA
+                &none  &none  &none  &kp SQT  &none  &none  &kp N7  &kp N8  &kp N9  &kp MINUS  &none  &none  &trans  &kp N0
             >;
         };
 
         layer_2 {
             // Layer 3
             bindings = <
-                &kp LCTRL  &kp A  &kp N2  &kp N3  &kp N4  &kp F6  &kp PG_UP  &kp LEFT  &kp DOWN  &kp RIGHT  &kp F9  &trans
-                &kp LSHFT  &kp N6  &kp X  &kp C  &kp V  &none  &kp PG_DN  &kp HOME  &kp END  &none  &none  &trans
-                &kp LGUI  &trans  &trans  &trans  &kp LGUI  &trans  &kp SPACE  &kp RET  &none  &none  &trans  &trans  &trans  &trans
+                &kp LCTRL  &kp A  &none  &none  &none  &kp F6  &kp PG_UP  &kp LEFT  &kp DOWN  &kp RIGHT  &kp F9  &trans
+                &kp LSHFT  &kp Z  &kp X  &kp C  &kp V  &none  &kp PG_DN  &kp HOME  &kp END  &none  &none  &trans
+                &kp LGUI  &none  &none  &none  &kp LGUI  &none  &kp SPACE  &kp RET  &none  &none  &none  &none  &trans  &trans
                 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
                 &kp TAB  &kp F1  &kp F2  &kp F3  &kp F4  &kp F5  &kp F7  &kp F8  &kp UP  &kp F10  &kp F11  &kp F12  &trans  &trans
             >;
