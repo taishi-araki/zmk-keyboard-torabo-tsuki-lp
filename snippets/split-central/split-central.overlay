@@ -1,0 +1,7 @@
+/*
+ * DYA Studio Level 2: instantiate the runtime-macro behavior on the central
+ * so &rmacro (slot) shows up in the Keymap tab's behavior picker. The
+ * matching driver is only compiled on the central (CONFIG_ZMK_RUNTIME_MACRO
+ * lives in split-central.conf).
+ */
+#include <behaviors/runtime_macro.dtsi>
