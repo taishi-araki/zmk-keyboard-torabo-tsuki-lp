@@ -1,7 +1,6 @@
 #include <input/processors.dtsi>
 #include <input/processors/runtime-input-processor.dtsi>
 #include <dt-bindings/zmk/input_transform.h>
-#include <dt-bindings/zmk/input.h>
 
 /*
  * Independent runtime input processor for whatever is relayed over
@@ -10,15 +9,22 @@
  * &mouse_runtime_input_processor singleton (torabo_tsuki_lp_right.overlay),
  * so the two show up as separate, independently tunable entries in DYA
  * Studio's Trackball tab (speed, rotation, invert, temp-layer, ...).
+ * runtime-input-processor.dtsi (included above) already pulls in
+ * dt-bindings/zmk/keys.h, which is what actually defines INPUT_EV_REL /
+ * INPUT_REL_X / INPUT_REL_Y below - no extra include needed for them.
  *
  * Default speed halved (1/2) versus the trackball's 1/1: the mini trackpad
  * felt too fast at full speed. Adjust further live from DYA Studio from
  * here on - no rebuild needed.
+ *
+ * processor-label is capped at 8 chars (BLE). "LeftPad" fits; if this ever
+ * relays double_ball's 2nd trackball instead of the mini trackpad, rename
+ * it to something ball-appropriate.
  */
 /{
     relay_runtime_input_processor: relay_runtime_input_processor {
         compatible = "zmk,input-processor-runtime";
-        processor-label = "Relay";
+        processor-label = "LeftPad";
         type = <INPUT_EV_REL>;
         x-codes = <INPUT_REL_X>;
         y-codes = <INPUT_REL_Y>;
