@@ -1,0 +1,3 @@
+name: trackpad-gesture
+append:
+  EXTRA_DTC_OVERLAY_FILE: trackpad-gesture.overlay

@@ -6,6 +6,8 @@ manifest:
       url-base: https://github.com/sekigon-gonnoc
     - name: cormoran
       url-base: https://github.com/cormoran
+    - name: te9no
+      url-base: https://github.com/te9no
   projects:
     # --- ZMK + Zephyr: cormoran's Custom Studio Protocol stack (ZMK master) ---
     # Required for the DYA Studio Level 2 runtime Macro/Combo modules, which
@@ -66,5 +68,12 @@ manifest:
     - name: zmk-module-battery-history
       remote: cormoran
       revision: main
+
+    # --- Mini trackpad: swipe-to-keybind gesture (browser tab control) ---
+    # Pinned to a specific commit, not `main`: the module's own README warns
+    # it is under active development and its API/behavior may still change.
+    - name: zmk-input-processor-keybind
+      remote: te9no
+      revision: 10ad463f2e3c7a7dfb4b7cffd6bddd0e9e8b5bae
   self:
     path: config
