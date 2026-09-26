@@ -116,32 +116,46 @@ IQS7211E チップ自身のオンチップ判定**（`finger_count = info_flags[
   processor インスタンス `relay_runtime_input_processor` / ラベル "LeftPad"、速度デフォルト半速）
 - 未使用のまま残置: `snippets/trackpad-gesture/`、`zmk-input-processor-keybind`（west.yml）
 
-### 18.（調査中）レイヤー3限定のスクロールが機能しない
+### 18. レイヤー3限定のスクロールが機能しない → スニペットの `.dtsi` 再 include が原因
 
-トラックボールの `&pointing_listener` は `zip_xy_transform(invert) → mouse_runtime_input_processor
-→ scroll_runtime_input_processor` の順で連結（`torabo_tsuki_lp_{left,right}.overlay`、
-`v0.3+dya-studio` 時代からの配線、今回のセッションでは触っていない）。`scroll` は
-`active-layers` をレイヤー3限定にして「レイヤー3の間だけスクロール」という設計だったが、
-**現在スクロールが一切効かない**（レイヤー0で `scroll` を全レイヤー有効にしても効かない＝
-レイヤー限定の問題ではなく、scroll 自体が呼ばれていない）。
+**症状**：トラックボールの `&pointing_listener` は `zip_xy_transform(invert) → mouse_runtime_input_processor
+→ scroll_runtime_input_processor` の順で連結し、`scroll` をレイヤー3だけ有効にして
+「レイヤー3の間だけスクロール」にしていたが、スクロールが一切出ない。DYA Studio 上の
+`scroll` の設定（レイヤー3のみ・XY→スクロール ON・0.04x）は正しかった。さらに `scroll` を
+「全レイヤー・XY→スクロール OFF・0.04x」にしても、カーソルは普通の速さのまま
+＝ **`scroll` がトラックボールのイベントを一切処理していない**。
 
-切り分け済みで**否定された仮説**：
-- `mouse` の一時レイヤー（temp-layer, 対象レイヤー4）が横取りしている → OFF にしても直らず
-- `mouse` がレイヤー3で常に有効なせいでチェーンの後段（`scroll`）まで処理が回っていない
-  → `mouse` のレイヤー3を無効化しても直らず
-- devicetree の配線自体（チェーン順・`xy-to-scroll-enabled`）は今回確認した限り変化なし
+**原因**：CI ログに出力される実際の devicetree（`zephyr.dts`）を見ると、
+`input-split-listener` スニペットを使うビルド（`trackpad_mini_right_central`,
+`double_ball_right_central`）だけ、`scroll_runtime_input_processor` が
+`x-codes = <0x6>`（REL_HWHEEL）、`y-codes = <0x8>`（REL_WHEEL）になっていた。
+スニペットを使わない `torabo_tsuki_lp_right_central` では、正しく `<0x0>` / `<0x1>`（REL_X / REL_Y）。
 
-**次にやること**：`zmk-module-runtime-input-processor`（cormoran, `main`）のソースを読み、
-input-processors チェーンで複数のランタイムプロセッサーを連結したときの内部動作
-（後続プロセッサーに処理を渡すか、最初にマッチしたものが握り続けるか）を確認する。
-この配線は `v0.3+dya-studio` 時代からそのまま引き継いだもので、その頃は動いていた
-可能性が高く、`main+dya` 移行で追従したモジュールの `main` ブランチが当時から
-挙動を変えている可能性が高い。
+- シールドの overlay（`torabo_tsuki_lp_right.overlay`）が `runtime-input-processor.dtsi` を
+  include した後、`&scroll_runtime_input_processor` の `x-codes/y-codes` を REL_X/REL_Y に上書きしている
+- スニペットの overlay は**シールドの overlay の後に**適用される。
+  `input-split-listener.overlay` が同じ `runtime-input-processor.dtsi` を再度 include していたため
+  （`bdd94e9` で追加）、ノードが既定値で再定義され、`x-codes/y-codes` が HWHEEL/WHEEL に戻った。
+  `xy-to-scroll-enabled` は既定値の側にない boolean なので残り、一見正しく見える
+- `runtime_processor_handle_event()` はコードが `x-codes/y-codes` に一致しないと何もせず次へ渡す。
+  トラックボールの REL_X/REL_Y は `scroll` を素通りし、スクロールへの変換もスケーリングも起きていなかった
+- ファームウェアの処理順・モジュール・HID・DYA Studio の操作・保存値は、どれも問題なかった
+  （調査の過程で否定。`mouse` の一時レイヤーやチェーンの位置も無関係）
+
+**修正**：`input-split-listener.overlay` からは `.dtsi` を include せず、定数用のヘッダー
+（`zephyr/dt-bindings/input/input-event-codes.h`, `dt-bindings/zmk/input_transform.h`）だけにした。
+`&zip_xy_transform` と runtime processor の binding は、シールドの overlay 側で既に読み込まれている。
+
+**教訓**：スニペットの overlay で、シールドの overlay が上書きしている `.dtsi` を再 include してはいけない。
+上書きが黙って消える。devicetree の最終結果は、CI ジョブのログの
+「Devicetree file」の出力で確認できる（`gh api repos/<repo>/actions/jobs/<id>/logs`）。
+`trackpad-gesture` スニペットも `input/processors.dtsi` を再 include している。
+シールド側は `zip_*` を上書きしていないので今は無害だが、使うなら同様に直す。
 
 ## TODO / 未解決事項
 
-- [ ] **レイヤー3限定スクロールが機能しない件**（上記18番）。次は
-      `zmk-module-runtime-input-processor` のソースで複数プロセッサー連結時の動作を確認
+- [ ] **レイヤー3限定スクロールの修正を実機で確認**（上記18番）。修正版を書き込んだら、
+      `scroll` を XY→スクロール ON・レイヤー3のみに戻して、`&mo 3` を押しながら確認
 
 - [ ] ミニトラックパッドのダブルタップ→ドラッグ固着バグの根本修正（`zmk-driver-iqs7211e` への
       パッチ or 上流への Issue/PR。タップ判定タイムアウトの追加、または無効化 Kconfig の新設）
