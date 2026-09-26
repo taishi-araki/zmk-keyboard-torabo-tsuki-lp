@@ -142,9 +142,11 @@ IQS7211E チップ自身のオンチップ判定**（`finger_count = info_flags[
 - ファームウェアの処理順・モジュール・HID・DYA Studio の操作・保存値は、どれも問題なかった
   （調査の過程で否定。`mouse` の一時レイヤーやチェーンの位置も無関係）
 
-**修正**：`input-split-listener.overlay` からは `.dtsi` を include せず、定数用のヘッダー
+**修正**：`a9b357b`。`input-split-listener.overlay` からは `.dtsi` を include せず、定数用のヘッダー
 （`zephyr/dt-bindings/input/input-event-codes.h`, `dt-bindings/zmk/input_transform.h`）だけにした。
 `&zip_xy_transform` と runtime processor の binding は、シールドの overlay 側で既に読み込まれている。
+
+2026-09-26 に実機（`trackpad_mini_right_central`）で、レイヤー3のスクロール復活を確認済み。
 
 **教訓**：スニペットの overlay で、シールドの overlay が上書きしている `.dtsi` を再 include してはいけない。
 上書きが黙って消える。devicetree の最終結果は、CI ジョブのログの
@@ -154,8 +156,6 @@ IQS7211E チップ自身のオンチップ判定**（`finger_count = info_flags[
 
 ## TODO / 未解決事項
 
-- [ ] **レイヤー3限定スクロールの修正を実機で確認**（上記18番）。修正版を書き込んだら、
-      `scroll` を XY→スクロール ON・レイヤー3のみに戻して、`&mo 3` を押しながら確認
 
 - [ ] ミニトラックパッドのダブルタップ→ドラッグ固着バグの根本修正（`zmk-driver-iqs7211e` への
       パッチ or 上流への Issue/PR。タップ判定タイムアウトの追加、または無効化 Kconfig の新設）
